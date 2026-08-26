@@ -52,21 +52,31 @@ cajaNada = Caja Nada
 -- lo entendamos nosotros. A la hora de entregar el TP final, recomiendo que sinteticemos lo importante.
 
 -- Recursion estructural:
--- Primer arg: una funcion 'f' que espera una Caja y devuelve un tipo 'a'
--- Segundo arg: una funcion 'g' que espera Circuito, 'a', Circuito, 'a' y devuelve 'a'
--- Tercer arg: una funcion 'h' que espera Caja, Circuito, 'a', Circuito, 'a', Caja y devuelve 'a'
+-- Primer arg: una funcion 'fCaja' que espera una Caja y devuelve un tipo 'a'
+-- Segundo arg: una funcion 'fSerie' que espera Circuito, 'a', Circuito, 'a' y devuelve 'a'
+-- Tercer arg: una funcion 'fParalelo' que espera Caja, Circuito, 'a', Circuito, 'a', Caja y devuelve 'a'
 -- Cuarto arg: El circuito a procesar
 -- Devuelve 'a' que es el resultado de haber procesado al circuito recursivamente
--- Como es recursion estructural, las funciones 'g' y 'h' esperan, ademas del 'a', al mismo circuito sin procesar.
+-- Como es recursion estructural, las funciones 'fSerie' y 'fParalelo' esperan, ademas del 'a', al mismo circuito sin procesar.
 recCircuito :: (Caja -> a)
             -> (Circuito -> a -> Circuito -> a -> a)
             -> (Caja -> Circuito -> a -> Circuito -> a -> Caja -> a)
             -> Circuito -> a
-recCircuito f g h = rec
+recCircuito fCaja fSerie fParalelo = rec
     where
-    rec (Caja caja) = f caja
-    rec (Serie cir1 cir2) = g cir1 (rec cir1) cir2 (rec cir2)
-    rec (Paralelo caja1 cir1 cir2 caja2) = h caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
+    rec (Caja caja)                      = fCaja caja
+    rec (Serie cir1 cir2)                = fSerie cir1 (rec cir1) cir2 (rec cir2)
+    rec (Paralelo caja1 cir1 cir2 caja2) = fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
+
+-- Version con case of. (QUEDA A EVALUAR SU IMPLEMENTACION)
+--recCircuito2 fCaja fSerie fParalelo c = case c of
+--    Caja caja                      -> fCaja caja
+--    Serie cir1 cir2                -> fSerie cir1 (rec cir1) cir2 (rec cir2)
+--        where
+--            rec = recCircuito2 fCaja fSerie fParalelo
+--    Paralelo caja1 cir1 cir2 caja2 -> fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
+--        where
+--            rec = recCircuito2 fCaja fSerie fParalelo
 
 -- Pruebas rapidas del 1)
 miCircuito :: Circuito
