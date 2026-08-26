@@ -72,17 +72,14 @@ foldCircuito :: (Caja -> a)
             -> (a -> a -> a)
             -> (Caja -> a -> a -> Caja -> a)
             -> Circuito -> a
--- Aca lo tenemos que corregir y utilizar recCircuito para declarar el foldCircuito
-foldCircuito f g h (Caja caja) = f caja
-foldCircuito f g h (Serie cir1 cir2) = g (foldCircuito f g h cir1) (foldCircuito f g h cir2)
-foldCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 (foldCircuito f g h cir1) (foldCircuito f g h cir2) caja2
+foldCircuito f g h = recCircuito f (\cir1 x cir2 y -> g x y) (\caja1 cir1 x cir2 y caja2 -> h caja1 x y caja2)
 
 -- Version explicita
 -- foldCircuito f g h (Caja caja) = f caja
 -- foldCircuito f g h (Serie cir1 cir2) = g (foldCircuito f g h cir1) (foldCircuito f g h cir2)
 -- foldCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 (foldCircuito f g h cir1) (foldCircuito f g h cir2) caja2
--- 3 invertido
 
+-- 3 invertido
 invertido = undefined -- TODO: COMPLETAR
 
 -- 4: hayCaminoIluminado
