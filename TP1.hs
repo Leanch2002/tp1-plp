@@ -47,8 +47,25 @@ cajaOff  = Caja off
 cajaNada = Caja Nada
 
 -- 1: recCircuito
+recCircuito :: (Caja -> a)
+            -> (a -> a -> a)
+            -> (Caja -> a -> a -> Caja -> a)
+            -> Circuito -> a
+recCircuito f g h (Caja caja) = f caja
+recCircuito f g h (Serie cir1 cir2) = g (recCircuito f g h cir1) (recCircuito f g h cir2)
+recCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 (recCircuito f g h cir1) (recCircuito f g h cir2) caja2
 
-recCircuito = undefined -- TODO: COMPLETAR
+-- Pruebas rapidas del 1)
+
+miCircuito = 
+    Serie
+        ( Paralelo
+            on
+            (Paralelo off cajaNada cajaOn on)
+            (Paralelo Nada cajaOn cajaOff Nada)
+            on
+        )
+        cajaOn
 
 -- 2: foldCircuito
 
