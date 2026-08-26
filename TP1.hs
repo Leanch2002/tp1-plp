@@ -1,3 +1,5 @@
+module TP1 where
+
 data Caja = Bombilla Bool | Nada
               deriving Eq
 instance Show Caja where
@@ -69,9 +71,9 @@ miCircuito =
 
 -- 2: foldCircuito
 foldCircuito :: (Caja -> a)
-            -> (a -> a -> a)
-            -> (Caja -> a -> a -> Caja -> a)
-            -> Circuito -> a
+             -> (a -> a -> a)
+             -> (Caja -> a -> a -> Caja -> a)
+             -> Circuito -> a
 foldCircuito f g h = recCircuito f (\cir1 x cir2 y -> g x y) (\caja1 cir1 x cir2 y caja2 -> h caja1 x y caja2)
 
 -- Version explicita
@@ -80,7 +82,8 @@ foldCircuito f g h = recCircuito f (\cir1 x cir2 y -> g x y) (\caja1 cir1 x cir2
 -- foldCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 (foldCircuito f g h cir1) (foldCircuito f g h cir2) caja2
 
 -- 3 invertido
-invertido = undefined -- TODO: COMPLETAR
+invertido :: Circuito -> Circuito
+invertido = foldCircuito (\a -> Caja a) (\a b -> Serie b a) (\a b c d -> Paralelo d c b a)
 
 -- 4: hayCaminoIluminado
 
