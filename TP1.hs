@@ -47,6 +47,9 @@ cajaOff  = Caja off
 cajaNada = Caja Nada
 
 -- 1: recCircuito
+-- Aca hice accidentalmente la recursion estructural.
+-- El ejercicio 1 se hace de otra forma pero todavia no descifre como.
+-- Este esqueleto sirve para el ejercicio 2 ya que es la rec estructural (fold) completamente funcional
 recCircuito :: (Caja -> a)
             -> (a -> a -> a)
             -> (Caja -> a -> a -> Caja -> a)
@@ -56,16 +59,16 @@ recCircuito f g h (Serie cir1 cir2) = g (recCircuito f g h cir1) (recCircuito f 
 recCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 (recCircuito f g h cir1) (recCircuito f g h cir2) caja2
 
 -- Pruebas rapidas del 1)
-
+miCircuito :: Circuito
 miCircuito = 
-    Serie
-        ( Paralelo
-            on
-            (Paralelo off cajaNada cajaOn on)
-            (Paralelo Nada cajaOn cajaOff Nada)
-            on
-        )
-        cajaOn
+  Serie
+      ( Paralelo
+          on
+          (Paralelo off cajaNada cajaOn on)
+          (Paralelo Nada cajaOn cajaOff Nada)
+          on
+      )
+      cajaOn
 
 -- 2: foldCircuito
 
