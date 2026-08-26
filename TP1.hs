@@ -47,6 +47,17 @@ cajaOff  = Caja off
 cajaNada = Caja Nada
 
 -- 1: recCircuito
+
+-- ATENCION!!! Descartar parte de esta descripcion, ya que esta hecha solo con el fin de que
+-- lo entendamos nosotros. A la hora de entregar el TP final, recomiendo que sinteticemos lo importante.
+
+-- Recursion estructural:
+-- Primer arg: una funcion 'f' que espera una Caja y devuelve un tipo 'a'
+-- Segundo arg: una funcion 'g' que espera Circuito, 'a', Circuito, 'a' y devuelve 'a'
+-- Tercer arg: una funcion 'h' que espera Caja, Circuito, 'a', Circuito, 'a', Caja y devuelve 'a'
+-- Cuarto arg: El circuito a procesar
+-- Devuelve 'a' que es el resultado de haber procesado al circuito recursivamente
+-- Como es recursion estructural, las funciones 'g' y 'h' esperan, ademas del 'a', al mismo circuito sin procesar.
 recCircuito :: (Caja -> a)
             -> (Circuito -> a -> Circuito -> a -> a)
             -> (Caja -> Circuito -> a -> Circuito -> a -> Caja -> a)
@@ -70,6 +81,12 @@ miCircuito =
       cajaOn
 
 -- 2: foldCircuito
+-- ATENCION!!! Borrar parte de estos comentarios
+-- Recursion estructural:
+-- Al ser estructurar, las funciones 'g' y 'h' (descritas anteriormente en el ejercicio 1)
+-- ahora tienen menos argumentos; ahora el circuito sin procesar es descartado, solo nos interesa el tipo 'a'.
+-- Las funciones que recibe 'recCircuito' en nuestra declaracion hacen de "puente" a las funciones que recibe 'foldCircuito':
+-- simplemente ignoramos lo que no nos sirve y le pasamos como argumento lo que necesitamos.
 foldCircuito :: (Caja -> a)
              -> (a -> a -> a)
              -> (Caja -> a -> a -> Caja -> a)
