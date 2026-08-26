@@ -1,5 +1,3 @@
-module TP1 where
-
 data Caja = Bombilla Bool | Nada
               deriving Eq
 instance Show Caja where
@@ -51,10 +49,11 @@ recCircuito :: (Caja -> a)
             -> (Circuito -> a -> Circuito -> a -> a)
             -> (Caja -> Circuito -> a -> Circuito -> a -> Caja -> a)
             -> Circuito -> a
-recCircuito f g h (Caja caja) = f caja
-recCircuito f g h (Serie cir1 cir2) = g cir1 (recCircuito f g h  cir1) cir2 (recCircuito f g h  cir2)
-recCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 cir1 (recCircuito f g h  cir1) cir2 (recCircuito f g h  cir2) caja2
-
+recCircuito f g h = rec
+    where
+    rec (Caja caja) = f caja
+    rec (Serie cir1 cir2) = g cir1 (rec cir1) cir2 (rec cir2)
+    rec (Paralelo caja1 cir1 cir2 caja2) = h caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
 
 -- Pruebas rapidas del 1)
 miCircuito :: Circuito
@@ -69,19 +68,19 @@ miCircuito =
       cajaOn
 
 -- 2: foldCircuito
--- Aca hice accidentalmente la recursion estructural.
--- El ejercicio 1 se hace de otra forma pero todavia no descifre como.
--- Este esqueleto sirve para el ejercicio 2 ya que es la rec estructural (fold) completamente funcional
+foldCircuito :: (Caja -> a)
+            -> (a -> a -> a)
+            -> (Caja -> a -> a -> Caja -> a)
+            -> Circuito -> a
+-- Aca lo tenemos que corregir y utilizar recCircuito para declarar el foldCircuito
+foldCircuito f g h (Caja caja) = f caja
+foldCircuito f g h (Serie cir1 cir2) = g (foldCircuito f g h cir1) (foldCircuito f g h cir2)
+foldCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 (foldCircuito f g h cir1) (foldCircuito f g h cir2) caja2
 
--- recCircuito :: (Caja -> a)
---             -> (a -> a -> a)
---             -> (Caja -> a -> a -> Caja -> a)
---             -> Circuito -> a
--- recCircuito f g h (Caja caja) = f caja
--- recCircuito f g h (Serie cir1 cir2) = g (recCircuito f g h cir1) (recCircuito f g h cir2)
--- recCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 (recCircuito f g h cir1) (recCircuito f g h cir2) caja2
-foldCircuito = undefined -- TODO: COMPLETAR
-
+-- Version explicita
+-- foldCircuito f g h (Caja caja) = f caja
+-- foldCircuito f g h (Serie cir1 cir2) = g (foldCircuito f g h cir1) (foldCircuito f g h cir2)
+-- foldCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 (foldCircuito f g h cir1) (foldCircuito f g h cir2) caja2
 -- 3 invertido
 
 invertido = undefined -- TODO: COMPLETAR
