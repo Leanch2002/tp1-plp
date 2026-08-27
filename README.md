@@ -33,7 +33,9 @@ cajaOff = Caja off
 cajaNada = Caja Nada
 ```
 Por ejemplo, el siguiente circuito
+
 ![circuito de ejemplo](imagenes/circuito_ejemplo.png)
+
 se define como:
 
 ```haskell
