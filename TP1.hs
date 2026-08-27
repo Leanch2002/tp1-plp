@@ -48,16 +48,6 @@ cajaNada = Caja Nada
 
 -- 1: recCircuito
 
--- ATENCION!!! Descartar parte de esta descripcion, ya que esta hecha solo con el fin de que
--- lo entendamos nosotros. A la hora de entregar el TP final, recomiendo que sinteticemos lo importante.
-
--- Recursion estructural:
--- Primer arg: una funcion 'fCaja' que espera una Caja y devuelve un tipo 'a'
--- Segundo arg: una funcion 'fSerie' que espera Circuito, 'a', Circuito, 'a' y devuelve 'a'
--- Tercer arg: una funcion 'fParalelo' que espera Caja, Circuito, 'a', Circuito, 'a', Caja y devuelve 'a'
--- Cuarto arg: El circuito a procesar
--- Devuelve 'a' que es el resultado de haber procesado al circuito recursivamente
--- Como es recursion estructural, las funciones 'fSerie' y 'fParalelo' esperan, ademas del 'a', al mismo circuito sin procesar.
 recCircuito :: (Caja -> a)
             -> (Circuito -> a -> Circuito -> a -> a)
             -> (Caja -> Circuito -> a -> Circuito -> a -> Caja -> a)
@@ -68,17 +58,6 @@ recCircuito fCaja fSerie fParalelo = rec
     rec (Serie cir1 cir2)                = fSerie cir1 (rec cir1) cir2 (rec cir2)
     rec (Paralelo caja1 cir1 cir2 caja2) = fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
 
--- Version con case of. (QUEDA A EVALUAR SU IMPLEMENTACION)
---recCircuito2 fCaja fSerie fParalelo c = case c of
---    Caja caja                      -> fCaja caja
---    Serie cir1 cir2                -> fSerie cir1 (rec cir1) cir2 (rec cir2)
---        where
---            rec = recCircuito2 fCaja fSerie fParalelo
---    Paralelo caja1 cir1 cir2 caja2 -> fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
---        where
---            rec = recCircuito2 fCaja fSerie fParalelo
-
--- Pruebas rapidas del 1)
 miCircuito :: Circuito
 miCircuito = 
   Serie
@@ -91,22 +70,11 @@ miCircuito =
       cajaOn
 
 -- 2: foldCircuito
--- ATENCION!!! Borrar parte de estos comentarios
--- Recursion estructural:
--- Al ser estructurar, las funciones 'g' y 'h' (descritas anteriormente en el ejercicio 1)
--- ahora tienen menos argumentos; ahora el circuito sin procesar es descartado, solo nos interesa el tipo 'a'.
--- Las funciones que recibe 'recCircuito' en nuestra declaracion hacen de "puente" a las funciones que recibe 'foldCircuito':
--- simplemente ignoramos lo que no nos sirve y le pasamos como argumento lo que necesitamos.
 foldCircuito :: (Caja -> a)
              -> (a -> a -> a)
              -> (Caja -> a -> a -> Caja -> a)
              -> Circuito -> a
 foldCircuito f g h = recCircuito f (\cir1 x cir2 y -> g x y) (\caja1 cir1 x cir2 y caja2 -> h caja1 x y caja2)
-
--- Version explicita
--- foldCircuito f g h (Caja caja) = f caja
--- foldCircuito f g h (Serie cir1 cir2) = g (foldCircuito f g h cir1) (foldCircuito f g h cir2)
--- foldCircuito f g h (Paralelo caja1 cir1 cir2 caja2) = h caja1 (foldCircuito f g h cir1) (foldCircuito f g h cir2) caja2
 
 -- 3 invertido
 invertido :: Circuito -> Circuito
