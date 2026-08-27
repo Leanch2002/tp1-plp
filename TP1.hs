@@ -101,7 +101,8 @@ foldCircuito :: (Caja -> a)
              -> (a -> a -> a)
              -> (Caja -> a -> a -> Caja -> a)
              -> Circuito -> a
-foldCircuito f g h = recCircuito f (\cir1 x cir2 y -> g x y) (\caja1 cir1 x cir2 y caja2 -> h caja1 x y caja2)
+foldCircuito fCaja fSerie fParalelo = 
+  recCircuito fCaja (\_ x _ y -> fSerie x y) (\caja1 _ x _ y caja2 -> fParalelo caja1 x y caja2)
 
 -- Version explicita
 -- foldCircuito f g h (Caja caja) = f caja
@@ -113,31 +114,49 @@ invertido :: Circuito -> Circuito
 invertido = foldCircuito (\a -> Caja a) (\a b -> Serie b a) (\a b c d -> Paralelo d c b a)
 
 -- 4: hayCaminoIluminado
+hayCaminoIluminado :: Circuito -> Bool
+hayCaminoIluminado =  
+  foldCircuito
+   (\a -> valorCaja a) 
+   (\rec1 rec2 -> rec1 || rec2)
+   (\c1 rec1 rec2 c2 -> valorCaja c1 && valorCaja c2 && (rec1 || rec2))
+  where valorCaja (Bombilla x) = x
+{-  
+    case cir of
+    (Caja c) -> valorCaja c
+    (Serie a b) -> hayCaminoIluminado a || hayCaminoIluminado b
+    (Paralelo c1 a b c2) -> (valorCaja c1 && valorCaja c2 && (hayCaminoIluminado a || hayCaminoIluminado b))
+  where valorCaja (Bombilla x) = x-}
 
-hayCaminoIluminado = undefined -- TODO: COMPLETAR
 
 -- 5: cantidadPrendidas
 
+cantidadPrendidas :: Circuito -> Int
 cantidadPrendidas = undefined -- TODO: COMPLETAR
 
 -- 6: cajasDeCircuito
 
+cajasDeCircuito :: Circuito -> [Caja]
 cajasDeCircuito = undefined -- TODO: COMPLETAR
 
 -- 7: esCircuitoProlijo
 
+esCircuitoProlijo :: Circuito -> Bool
 esCircuitoProlijo = undefined -- TODO: COMPLETAR
 
 -- 8: circuitoEmprolijado
 
+circuitoEmprolijado :: Circuito -> Circuito
 circuitoEmprolijado = undefined -- TODO: COMPLETAR
 
 -- 9: tienenLaMismaEstructura 
 
+tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
 tienenLaMismaEstructura = undefined -- TODO: COMPLETAR
 
 -- 10: subCircuitoMásResistente
 
+subCircuitoMásResistente :: Circuito -> Circuito
 subCircuitoMásResistente = undefined -- TODO: COMPLETAR
 
 {-- 11: Demostrar: alternado . alternado = id
