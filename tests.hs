@@ -1,5 +1,5 @@
-import Test.HUnit
-import TP1
+import           Test.HUnit
+import           TP1
 
 -- TESTS
 
@@ -34,7 +34,10 @@ testsCajasDeCircuito :: Test
 testsCajasDeCircuito = TestList -- TODO: AGREGAR
   [ "La lista de cajas de un circuito con una única caja es la lista con esa caja"
     ~: cajasDeCircuito cajaOn
-    ~?= [on]
+    ~?= [on],
+    "La lista de cajas del circuito de ejemplo"
+    ~: cajasDeCircuito miCircuito
+    ~?= [on, off, Nada, on, on, Nada, on, off, Nada, on, on]
   ]
 
 testsEsCircuitoProlijo :: Test
@@ -57,13 +60,13 @@ testsCircuitoEmprolijado = TestList -- TODO: AGREGAR
 testsTienenLaMismaEstructura :: Test
 testsTienenLaMismaEstructura = TestList -- TODO: AGREGAR
   [
-    
+
   ]
 
 testsSubCircuitoMásResistente :: Test
 testsSubCircuitoMásResistente = TestList -- TODO: AGREGAR
   [
-    
+
   ]
 
 tests :: Test

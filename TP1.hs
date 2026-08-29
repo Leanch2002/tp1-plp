@@ -6,9 +6,9 @@ instance Show Caja where
     show = showDeCaja
 
 showDeCaja :: Caja -> String
-showDeCaja (Bombilla True)  = "💡"
-showDeCaja (Bombilla False) = "⚪️"
-showDeCaja (Nada)           = "🛑"
+showDeCaja (Bombilla True)  = "On" --"💡"
+showDeCaja (Bombilla False) = "Off" --"⚪️"
+showDeCaja (Nada)           = "Nada" --"🛑"
 
 data Circuito = Caja     Caja
               | Serie    Circuito Circuito
@@ -102,13 +102,14 @@ isOn (Bombilla b) = b
 isOn (Nada)       = False
 
 cantidadPrendidas:: Circuito -> Int
-cantidadPrendidas = foldCircuito (rec) (\c1  c2 -> c1 + c2) (\c1 cir1 cir2 c2 -> cir1 + cir2 + (rec c1) + (rec c2))
+cantidadPrendidas = foldCircuito (rec) (\c1  c2 -> c1 + c2) (\c1 cir1 cir2 c2 -> (rec c1) + cir1 + cir2 + (rec c2))
   where rec = (\c -> if isOn c then 1 else 0)
 
 -- 6: cajasDeCircuito
 
 cajasDeCircuito :: Circuito -> [Caja]
-cajasDeCircuito = undefined -- TODO: COMPLETAR
+cajasDeCircuito = foldCircuito (rec) (\c1  c2 -> c1 ++ c2) (\c1 cir1 cir2 c2 -> (rec c1) ++ cir1 ++ cir2 ++ (rec c2))
+  where rec = (\c -> [c])
 
 -- 7: esCircuitoProlijo
 
