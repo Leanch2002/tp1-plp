@@ -5,10 +5,10 @@ data Caja = Bombilla Bool | Nada
 instance Show Caja where
     show = showDeCaja
 
-showDeCaja :: Caja -> String 
-showDeCaja (Bombilla True) = "💡"
+showDeCaja :: Caja -> String
+showDeCaja (Bombilla True)  = "💡"
 showDeCaja (Bombilla False) = "⚪️"
-showDeCaja (Nada) = "🛑"
+showDeCaja (Nada)           = "🛑"
 
 data Circuito = Caja     Caja
               | Serie    Circuito Circuito
@@ -59,7 +59,7 @@ recCircuito fCaja fSerie fParalelo = rec
     rec (Paralelo caja1 cir1 cir2 caja2) = fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
 
 miCircuito :: Circuito
-miCircuito = 
+miCircuito =
   Serie
       ( Paralelo
           on
@@ -74,7 +74,7 @@ foldCircuito :: (Caja -> a)
              -> (a -> a -> a)
              -> (Caja -> a -> a -> Caja -> a)
              -> Circuito -> a
-foldCircuito fCaja fSerie fParalelo = 
+foldCircuito fCaja fSerie fParalelo =
   recCircuito fCaja (\_ x _ y -> fSerie x y) (\caja1 _ x _ y caja2 -> fParalelo caja1 x y caja2)
 
 -- 3 invertido
@@ -83,24 +83,27 @@ invertido = foldCircuito (\a -> Caja a) (\a b -> Serie b a) (\a b c d -> Paralel
 
 -- 4: hayCaminoIluminado
 hayCaminoIluminado :: Circuito -> Bool
-hayCaminoIluminado =  
+hayCaminoIluminado =
   foldCircuito
-   (\a -> valorCaja a) 
+   (\a -> valorCaja a)
    (\rec1 rec2 -> rec1 || rec2)
    (\c1 rec1 rec2 c2 -> valorCaja c1 && valorCaja c2 && (rec1 || rec2))
   where valorCaja (Bombilla x) = x
-{-  
+{-
     case cir of
     (Caja c) -> valorCaja c
     (Serie a b) -> hayCaminoIluminado a || hayCaminoIluminado b
     (Paralelo c1 a b c2) -> (valorCaja c1 && valorCaja c2 && (hayCaminoIluminado a || hayCaminoIluminado b))
   where valorCaja (Bombilla x) = x-}
 
-
 -- 5: cantidadPrendidas
+isOn:: Caja -> Bool
+isOn (Bombilla b) = b
+isOn (Nada)       = False
 
-cantidadPrendidas :: Circuito -> Int
-cantidadPrendidas = undefined -- TODO: COMPLETAR
+cantidadPrendidas:: Circuito -> Int
+cantidadPrendidas = foldCircuito (rec) (\c1  c2 -> c1 + c2) (\c1 cir1 cir2 c2 -> cir1 + cir2 + (rec c1) + (rec c2))
+  where rec = (\c -> if isOn c then 1 else 0)
 
 -- 6: cajasDeCircuito
 
@@ -117,7 +120,7 @@ esCircuitoProlijo = undefined -- TODO: COMPLETAR
 circuitoEmprolijado :: Circuito -> Circuito
 circuitoEmprolijado = undefined -- TODO: COMPLETAR
 
--- 9: tienenLaMismaEstructura 
+-- 9: tienenLaMismaEstructura
 
 tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
 tienenLaMismaEstructura = undefined -- TODO: COMPLETAR
