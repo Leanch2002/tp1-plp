@@ -85,28 +85,25 @@ invertido = foldCircuito (\a -> Caja a) (\a b -> Serie b a) (\a b c d -> Paralel
 hayCaminoIluminado :: Circuito -> Bool
 hayCaminoIluminado =
   foldCircuito
-   (\a -> valorCaja a)
-   (\rec1 rec2 -> rec1 || rec2)
-   (\c1 rec1 rec2 c2 -> valorCaja c1 && valorCaja c2 && (rec1 || rec2))
-  where valorCaja (Bombilla x) = x
-{-
-    case cir of
+   (\c -> isOn c)
+   (\rec1 rec2 -> rec1 && rec2)
+   (\c1 rec1 rec2 c2 -> (isOn c1 && isOn c2) && (rec1 || rec2))
+
+{-  case cir of
     (Caja c) -> valorCaja c
     (Serie a b) -> hayCaminoIluminado a || hayCaminoIluminado b
     (Paralelo c1 a b c2) -> (valorCaja c1 && valorCaja c2 && (hayCaminoIluminado a || hayCaminoIluminado b))
   where valorCaja (Bombilla x) = x-}
 
--- 5: cantidadPrendidas
 isOn:: Caja -> Bool
-isOn (Bombilla b) = b
-isOn (Nada)       = False
+isOn (c) = c == Bombilla True
 
+-- 5: cantidadPrendidas
 cantidadPrendidas:: Circuito -> Int
 cantidadPrendidas = foldCircuito (rec) (\c1  c2 -> c1 + c2) (\c1 cir1 cir2 c2 -> (rec c1) + cir1 + cir2 + (rec c2))
   where rec = (\c -> if isOn c then 1 else 0)
 
 -- 6: cajasDeCircuito
-
 cajasDeCircuito :: Circuito -> [Caja]
 cajasDeCircuito = foldCircuito (rec) (\c1  c2 -> c1 ++ c2) (\c1 cir1 cir2 c2 -> (rec c1) ++ cir1 ++ cir2 ++ (rec c2))
   where rec = (\c -> [c])

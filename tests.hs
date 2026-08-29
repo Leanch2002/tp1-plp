@@ -20,7 +20,10 @@ testsHayCaminoIluminado :: Test
 testsHayCaminoIluminado = TestList -- TODO: AGREGAR
   [ "En una caja con bombilla encendida hay camino iluminado"
     ~: hayCaminoIluminado cajaOn
-    ~?= True
+    ~?= True,
+    "En circuito de ejemplo hay false, tiene un Nada"
+    ~: hayCaminoIluminado miCircuito
+    ~?= False
   ]
 
 testsCantidadPrendidas :: Test
