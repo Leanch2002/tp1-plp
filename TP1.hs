@@ -69,6 +69,9 @@ miCircuito =
       )
       cajaOn
 
+miCircuitoProlijo = Serie (Serie cajaOn cajaOff) cajaOn
+miCircuitoDesprolijo = Serie cajaOn (Serie cajaOff cajaOn)
+
 -- 2: foldCircuito
 foldCircuito :: (Caja -> a)
              -> (a -> a -> a)
@@ -105,13 +108,16 @@ cantidadPrendidas = foldCircuito (rec) (\c1  c2 -> c1 + c2) (\c1 cir1 cir2 c2 ->
 
 -- 6: cajasDeCircuito
 cajasDeCircuito :: Circuito -> [Caja]
-cajasDeCircuito = foldCircuito (rec) (\c1  c2 -> c1 ++ c2) (\c1 cir1 cir2 c2 -> (rec c1) ++ cir1 ++ cir2 ++ (rec c2))
-  where rec = (\c -> [c])
+cajasDeCircuito = foldCircuito (\c -> [c]) (\c1  c2 -> c1 ++ c2) (\c1 cir1 cir2 c2 -> [c1] ++ cir1 ++ cir2 ++ [c2])
 
 -- 7: esCircuitoProlijo
 
 esCircuitoProlijo :: Circuito -> Bool
-esCircuitoProlijo = undefined -- TODO: COMPLETAR
+esCircuitoProlijo = recCircuito (const True) (\c1 _ c2 _ -> not (esSerie c2)) (\_ c1 _ c2 _ _ -> not (esSerieDesprolija c1) && not (esSerieDesprolija c2))
+  where esSerieDesprolija (Serie a b) = esSerie b
+        esSerieDesprolija _           = False
+        esSerie (Serie _ _) = True
+        esSerie _           = False
 
 -- 8: circuitoEmprolijado
 
