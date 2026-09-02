@@ -1,6 +1,30 @@
 import           Test.HUnit
 import           TP1
 
+-- CIRCUITOS DE PRUEBA
+miCircuito :: Circuito
+miCircuito =
+  Serie
+    (Paralelo
+      on
+      (Paralelo off cajaNada cajaOn on)
+      (Paralelo Nada cajaOn cajaOff Nada)
+      on
+    )
+    cajaOn
+    
+-- Invierte los 3 tipos de circuitos estando incluso anidados
+miCircuitoInvertido :: Circuito
+miCircuitoInvertido =
+  Serie
+    cajaOn
+    (Paralelo
+      on
+      (Paralelo Nada cajaOff cajaOn Nada)
+      (Paralelo on cajaOn cajaNada off)
+      on
+    )
+
 -- TESTS
 
 testsInvertido :: Test
@@ -14,6 +38,9 @@ testsInvertido = TestList -- TODO: AGREGAR
   , "Caja invertida (3)"
     ~: invertido cajaNada
     ~?= cajaNada
+  , "Circuito invertido"
+    ~: invertido miCircuito
+    ~?= miCircuitoInvertido
   ]
 
 testsHayCaminoIluminado :: Test

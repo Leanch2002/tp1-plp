@@ -58,17 +58,6 @@ recCircuito fCaja fSerie fParalelo = rec
     rec (Serie cir1 cir2)                = fSerie cir1 (rec cir1) cir2 (rec cir2)
     rec (Paralelo caja1 cir1 cir2 caja2) = fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
 
-miCircuito :: Circuito
-miCircuito =
-  Serie
-      ( Paralelo
-          on
-          (Paralelo off cajaNada cajaOn on)
-          (Paralelo Nada cajaOn cajaOff Nada)
-          on
-      )
-      cajaOn
-
 miCircuitoProlijo = Serie (Serie cajaOn cajaOff) cajaOn
 miCircuitoDesprolijo = Serie cajaOn (Serie cajaOff cajaOn)
 
