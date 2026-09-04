@@ -126,8 +126,8 @@ tienenLaMismaEstructura c1 c2 = foldr  (&&) True (zipWith (==) (cirToString c1) 
 subCircuitoMásResistente :: Circuito -> Circuito
 subCircuitoMásResistente = recCircuito
   (\c -> Caja c)
-  (\cir1 rec1 cir2 rec2 -> mejorSegun compararResistencia (Serie cir1 cir2 : cir1 : cir2 : rec1 : rec2 : []))
-  (\caja1 cir1 rec1 cir2 rec2 caja2 -> mejorSegun compararResistencia (Paralelo caja1 cir1 cir2 caja2 : Caja caja1 : cir1 : rec1 : cir2 : rec2 : Caja caja2 : []))
+  (\cir1 rec1 cir2 rec2 -> mejorSegun compararResistencia (Serie cir1 cir2 : rec1 : rec2 : []))
+  (\caja1 cir1 rec1 cir2 rec2 caja2 -> mejorSegun compararResistencia (Paralelo caja1 cir1 cir2 caja2 : Caja caja1 : rec1 : rec2 : Caja caja2 : []))
 
 resistenciaCircuito :: Circuito -> Float
 resistenciaCircuito = undefined
