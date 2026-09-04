@@ -123,9 +123,20 @@ tienenLaMismaEstructura c1 c2 = foldr  (&&) True (zipWith (==) (cirToString c1) 
 -}
 
 -- 10: subCircuitoMásResistente
-
 subCircuitoMásResistente :: Circuito -> Circuito
-subCircuitoMásResistente = undefined -- TODO: COMPLETAR
+subCircuitoMásResistente = recCircuito
+  (\c -> Caja c)
+  (\cir1 rec1 cir2 rec2 -> mejorSegun compararResistencia (Serie cir1 cir2 : rec1 : rec2 : []))
+  (\caja1 cir1 rec1 cir2 rec2 caja2 -> mejorSegun compararResistencia (Paralelo caja1 cir1 cir2 caja2 : Caja caja1 : rec1 : rec2 : Caja caja2 : []))
+
+resistenciaCircuito :: Circuito -> Float
+resistenciaCircuito = undefined
+
+compararResistencia :: Circuito -> Circuito -> Bool
+compararResistencia = (\cir1 cir2 -> if resistenciaCircuito cir1 > resistenciaCircuito cir2 then True else False)
+
+mejorSegun :: (a -> a -> Bool) -> [a] -> a
+mejorSegun f = foldr1 (\x y -> if f x y then x else y)
 
 {-- 11: Demostrar: alternado . alternado = id
 
