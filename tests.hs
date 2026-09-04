@@ -12,6 +12,8 @@ miCircuito =
       on
     )
     cajaOn
+
+miCircuitoDesprolijo = Serie cajaOn (Serie cajaOff cajaOn)
     
 -- Invierte los 3 tipos de circuitos estando incluso anidados
 miCircuitoInvertido :: Circuito
@@ -57,7 +59,13 @@ testsCantidadPrendidas :: Test
 testsCantidadPrendidas = TestList -- TODO: AGREGAR
   [ "Cantidad prendidas en caja prendida es 1"
     ~: cantidadPrendidas cajaOn
-    ~?= 1
+    ~?= 1,
+    "Cantidad prendidas en caja apagada es 0"
+    ~: cantidadPrendidas cajaOff
+    ~?= 0,
+    "Cambiar la estructura de un circuito no cambia la cantidad de luces prendidas"
+    ~: cantidadPrendidas miCircuito == cantidadPrendidas (invertido miCircuito)
+    ~?= True
   ]
 
 testsCajasDeCircuito :: Test
@@ -67,14 +75,23 @@ testsCajasDeCircuito = TestList -- TODO: AGREGAR
     ~?= [on],
     "La lista de cajas del circuito de ejemplo"
     ~: cajasDeCircuito miCircuito
-    ~?= [on, off, Nada, on, on, Nada, on, off, Nada, on, on]
+    ~?= [on, off, Nada, on, on, Nada, on, off, Nada, on, on],
+    "Al invertir el circuito tambien se invierte el orden de las cajas"
+    ~: cajasDeCircuito (invertido miCircuito)
+    ~?= [on,on,Nada,off,on,Nada,on,on,Nada,off,on]
   ]
 
 testsEsCircuitoProlijo :: Test
 testsEsCircuitoProlijo = TestList -- TODO: AGREGAR
   [ "Una caja es prolija"
     ~: esCircuitoProlijo cajaOn
-    ~?= True
+    ~?= True,
+    "Una serie con dos circuitos en paralelo es un ciruito prolijo"
+    ~: esCircuitoProlijo miCircuito
+    ~?= True,
+    "Una serie cuyo segundo circuito tambien es una serie es un ciruito desprolijo"
+    ~: esCircuitoProlijo miCircuitoDesprolijo
+    ~?= False
   ]
 
 -- NOTA: para correr este test, cambiar la línea 18 del archivo tp1.hs de "show = showDeCircuito" a
