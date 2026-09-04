@@ -81,12 +81,6 @@ hayCaminoIluminado =
    (\rec1 rec2 -> rec1 && rec2)
    (\c1 rec1 rec2 c2 -> (isOn c1 && isOn c2) && (rec1 || rec2))
 
-{-  case cir of
-    (Caja c) -> valorCaja c
-    (Serie a b) -> hayCaminoIluminado a || hayCaminoIluminado b
-    (Paralelo c1 a b c2) -> (valorCaja c1 && valorCaja c2 && (hayCaminoIluminado a || hayCaminoIluminado b))
-  where valorCaja (Bombilla x) = x-}
-
 isOn:: Caja -> Bool
 isOn (c) = c == Bombilla True
 
@@ -116,7 +110,17 @@ circuitoEmprolijado = undefined -- TODO: COMPLETAR
 -- 9: tienenLaMismaEstructura
 
 tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
-tienenLaMismaEstructura = undefined -- TODO: COMPLETAR
+tienenLaMismaEstructura c1 c2 = foldr  (&&) True (zipWith (==) (cirToString c1) (cirToString c2))
+  where cirToString = foldCircuito 
+          (\c -> ['c']) 
+          (\c1  c2 -> ['s'] ++ c1 ++ c2 ) 
+          (\c1 cir1 cir2 c2 -> ['p']++['c'] ++ cir1 ++ cir2 ++ ['c'])
+
+{-
+    lo que sabemos, todo circuito prolijo solo tiene series a la izquierda
+    mi idea es transformar los 2 circuitos en listas cir1 y cir2
+    despues hago foldr  (&&) True (zipwith (=) cir1 cir2) y esto me devuelve el valor de verdad de comparar parte por parte
+-}
 
 -- 10: subCircuitoMásResistente
 
