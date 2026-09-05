@@ -89,8 +89,29 @@ testsCircuitoEmprolijado = TestList -- TODO: AGREGAR
 
 testsTienenLaMismaEstructura :: Test
 testsTienenLaMismaEstructura = TestList -- TODO: AGREGAR
-  [
-
+  [ "Cajas con distinto contenido tienen la misma estructura"
+    ~: tienenLaMismaEstructura cajaOn cajaNada
+    ~?= True
+  , "Series con la misma estructura tienen la misma estructura"
+    ~: tienenLaMismaEstructura
+        (Serie (Serie cajaOn cajaOff) cajaOn)
+        (Serie (Serie cajaNada cajaOn) cajaOff)
+    ~?= True
+  , "Una serie y un paralelo no tienen la misma estructura"
+    ~: tienenLaMismaEstructura
+        (Serie cajaOn cajaOff)
+        (Paralelo on cajaOn cajaOff off)
+    ~?= False
+  , "Una serie con distinta cantidad de cajas no tiene la misma estructura"
+    ~: tienenLaMismaEstructura
+        (Serie cajaOn cajaOff)
+        (Serie (Serie cajaNada cajaOn) cajaOff)
+    ~?= False
+  , "Misma cantidad de cajas, y paralelos, diferente orden "
+    ~: tienenLaMismaEstructura
+        (Paralelo on cajaOn (Paralelo off cajaNada cajaOn on) off)
+        (Paralelo off  (Paralelo on cajaOn cajaNada off) cajaOn off )
+    ~?= False
   ]
 
 testsSubCircuitoMásResistente :: Test
