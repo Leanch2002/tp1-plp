@@ -109,18 +109,21 @@ circuitoEmprolijado = undefined -- TODO: COMPLETAR
 
 -- 9: tienenLaMismaEstructura
 
+-- La idea aca es que usamos foldr para construir un monton de funciones que van tomando valores de el segundo circuito
 tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
-tienenLaMismaEstructura c1 c2 = foldr  (&&) True (zipWith (==) (cirToString c1) (cirToString c2))
-  where cirToString = foldCircuito
-          (\c -> ['c'])
-          (\c1  c2 -> ['s'] ++ c1 ++ c2 )
-          (\c1 cir1 cir2 c2 -> ['p']++['c'] ++ cir1 ++ cir2 ++ ['c'])
-
-{-
-    lo que sabemos, todo circuito prolijo solo tiene series a la izquierda
-    mi idea es transformar los 2 circuitos en listas cir1 y cir2
-    despues hago foldr  (&&) True (zipwith (=) cir1 cir2) y esto me devuelve el valor de verdad de comparar parte por parte
--}
+tienenLaMismaEstructura = foldCircuito fCaja fSerie fParalelo 
+          where
+            -- si vaciamos el primer circuito se corre esto en el segundo
+            fCaja _ (Caja _) = True
+            fCaja _ _ = False
+            -- si primer circuito es serie -> matcheamos casos para el segundo
+            fSerie rec1 rec2 cir2 = case cir2 of
+                      (Serie c1 c2) -> (rec1 c1) && (rec2 c2)
+                      _             -> False
+            -- si primer circuito es paralelo -> matcheamos casos para el segundo
+            fParalelo  _ rec1 rec2 _ cir2 = case cir2 of
+                      (Paralelo _ c1 c2 _) -> (rec1 c1) && (rec2 c2)
+                      _                    -> False
 
 -- 10: subCircuitoMásResistente
 subCircuitoMásResistente :: Circuito -> Circuito
