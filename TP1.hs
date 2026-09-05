@@ -71,27 +71,27 @@ foldCircuito fCaja fSerie fParalelo =
 
 -- 3 invertido
 invertido :: Circuito -> Circuito
-invertido = foldCircuito (\a -> Caja a) (\a b -> Serie b a) (\a b c d -> Paralelo d c b a)
+invertido = foldCircuito Caja (\a b -> Serie b a) (\a b c d -> Paralelo d c b a)
 
 -- 4: hayCaminoIluminado
 hayCaminoIluminado :: Circuito -> Bool
 hayCaminoIluminado =
   foldCircuito
-   (\c -> isOn c)
-   (\rec1 rec2 -> rec1 && rec2)
+   isOn
+   (&&)
    (\c1 rec1 rec2 c2 -> (isOn c1 && isOn c2) && (rec1 || rec2))
 
 isOn:: Caja -> Bool
-isOn (c) = c == Bombilla True
+isOn = (== Bombilla True)
 
 -- 5: cantidadPrendidas
 cantidadPrendidas:: Circuito -> Int
-cantidadPrendidas = foldCircuito (rec) (\c1  c2 -> c1 + c2) (\c1 cir1 cir2 c2 -> (rec c1) + cir1 + cir2 + (rec c2))
-  where rec = (\c -> if isOn c then 1 else 0)
+cantidadPrendidas = foldCircuito valor (+) (\c1 cir1 cir2 c2 -> (valor c1) + cir1 + cir2 + (valor c2))
+  where valor = (\c -> if isOn c then 1 else 0)
 
 -- 6: cajasDeCircuito
 cajasDeCircuito :: Circuito -> [Caja]
-cajasDeCircuito = foldCircuito (\c -> [c]) (\c1  c2 -> c1 ++ c2) (\c1 cir1 cir2 c2 -> [c1] ++ cir1 ++ cir2 ++ [c2])
+cajasDeCircuito = foldCircuito (:[]) (++) (\c1 cir1 cir2 c2 -> [c1] ++ cir1 ++ cir2 ++ [c2])
 
 -- 7: esCircuitoProlijo
 
@@ -118,9 +118,20 @@ tienenLaMismaEstructura = rec
             rec _ _ = False
 
 -- 10: subCircuitoMásResistente
-
 subCircuitoMásResistente :: Circuito -> Circuito
-subCircuitoMásResistente = undefined -- TODO: COMPLETAR
+subCircuitoMásResistente = recCircuito
+  (Caja)
+  (\cir1 rec1 cir2 rec2 -> mejorSegun compararResistencia (Serie cir1 cir2 : rec1 : rec2 : []))
+  (\caja1 cir1 rec1 cir2 rec2 caja2 -> mejorSegun compararResistencia (Paralelo caja1 cir1 cir2 caja2 : Caja caja1 : rec1 : rec2 : Caja caja2 : []))
+
+resistenciaCircuito :: Circuito -> Float
+resistenciaCircuito = undefined
+
+compararResistencia :: Circuito -> Circuito -> Bool
+compararResistencia = (\cir1 cir2 -> resistenciaCircuito cir1 > resistenciaCircuito cir2)
+
+mejorSegun :: (a -> a -> Bool) -> [a] -> a
+mejorSegun f = foldr1 (\x y -> if f x y then x else y)
 
 {-- 11: Demostrar: alternado . alternado = id
 

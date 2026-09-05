@@ -25,6 +25,18 @@ miCircuitoInvertido =
       on
     )
 
+-- En este circuito HAY un camino iluminado, y otros caminos que no
+cirCaminoIluminado :: Circuito
+cirCaminoIluminado =
+  Serie
+    (Paralelo
+      on
+      (Paralelo on cajaNada cajaOn on)
+      (Paralelo Nada cajaOn cajaOff Nada)
+      on
+    )
+    cajaOn
+
 -- TESTS
 
 testsInvertido :: Test
@@ -47,10 +59,13 @@ testsHayCaminoIluminado :: Test
 testsHayCaminoIluminado = TestList -- TODO: AGREGAR
   [ "En una caja con bombilla encendida hay camino iluminado"
     ~: hayCaminoIluminado cajaOn
-    ~?= True,
-    "En circuito de ejemplo hay false, tiene un Nada"
+    ~?= True
+  , "Este circuito No tiene ningun camino iluminado"
     ~: hayCaminoIluminado miCircuito
     ~?= False
+  , "En este circuito HAY un camino iluminado, y otros caminos que no"
+    ~: hayCaminoIluminado cirCaminoIluminado
+    ~?= True
   ]
 
 testsCantidadPrendidas :: Test
