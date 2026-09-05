@@ -88,21 +88,21 @@ testsCircuitoEmprolijado = TestList -- TODO: AGREGAR
   ]
 
 testsTienenLaMismaEstructura :: Test
-testsTienenLaMismaEstructura = TestList -- TODO: AGREGAR
-  [ "Cajas con distinto contenido tienen la misma estructura"
+testsTienenLaMismaEstructura = TestList 
+  [ "Cajas con distinto contenido"
     ~: tienenLaMismaEstructura cajaOn cajaNada
     ~?= True
-  , "Series con la misma estructura tienen la misma estructura"
+  , "Series con la misma estructura"
     ~: tienenLaMismaEstructura
         (Serie (Serie cajaOn cajaOff) cajaOn)
         (Serie (Serie cajaNada cajaOn) cajaOff)
     ~?= True
-  , "Una serie y un paralelo no tienen la misma estructura"
+  , "serie y paralelo"
     ~: tienenLaMismaEstructura
         (Serie cajaOn cajaOff)
         (Paralelo on cajaOn cajaOff off)
     ~?= False
-  , "Una serie con distinta cantidad de cajas no tiene la misma estructura"
+  , "series con distinta cantidad de cajas"
     ~: tienenLaMismaEstructura
         (Serie cajaOn cajaOff)
         (Serie (Serie cajaNada cajaOn) cajaOff)
