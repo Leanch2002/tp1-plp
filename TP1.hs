@@ -109,13 +109,21 @@ circuitoEmprolijado = undefined -- TODO: COMPLETAR
 
 -- 9: tienenLaMismaEstructura
 
+-- La idea aca es que usamos foldr para construir un monton de funciones que van tomando valores de el segundo circuito
 tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
-tienenLaMismaEstructura = rec
+tienenLaMismaEstructura = foldCircuito fCaja fSerie fParalelo 
           where
-            rec (Caja _) (Caja _) =  True
-            rec (Serie c1 c2) (Serie c3 c4) = rec c1 c3 && rec c2 c4  
-            rec (Paralelo _ c1 c2 _) (Paralelo _ c3 c4 _) = rec c1 c3 && rec c2 c4  
-            rec _ _ = False
+            -- si vaciamos el primer circuito se corre esto en el segundo
+            fCaja _ (Caja _) = True
+            fCaja _ _ = False
+            -- si primer circuito es serie -> matcheamos casos para el segundo
+            fSerie rec1 rec2 cir2 = case cir2 of
+                      (Serie c1 c2) -> (rec1 c1) && (rec2 c2)
+                      _             -> False
+            -- si primer circuito es paralelo -> matcheamos casos para el segundo
+            fParalelo  _ rec1 rec2 _ cir2 = case cir2 of
+                      (Paralelo _ c1 c2 _) -> (rec1 c1) && (rec2 c2)
+                      _                    -> False
 
 -- 10: subCircuitoMásResistente
 subCircuitoMásResistente :: Circuito -> Circuito
