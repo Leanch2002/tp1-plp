@@ -146,5 +146,88 @@ not :: Bool -> Bool
 {NF} not False = True
 
 -- TODO: COMPLETAR
+  alternado . alternado = id
+  {C} alternado ( alternado ) = id
+  {EXT} para todo c :: circuito . alternado ( alternado c ) = id c
+  P(t) : para todo c :: circuito . alternado ( alternado c ) = id c
+  
+  # procedemos por induccion sobre t
+
+  P(Caja a) = alternado ( alternado Caja a ) = id (Caja a)
+  alternado ( alternado Caja a ) =
+   {AC} alternado ( Caja (cajaAlternada a) ) =
+   
+   Por lema de generacion de cajas a puede ser Bombilla Bool o Nada:
+   1) a = Nada -> alternado ( Caja (cajaAlternada Nada) )
+                  {CAN} alternado ( Caja Nada ) = 
+                  {CAN} Caja Nada = 
+                  {I} Id (Caja Nada) ✓
+
+   2) ∀x::bool. alternado (Caja (cajaAlternada (Bombilla x)))
+   Por lema de generacion de booleanos x es True o False 
+
+   2.1) x = True -> alternado ( Caja (cajaAlternada on) )
+              {CAB} alternado ( Caja off ) =
+              {AC}  Caja (cajaAlternada off) =
+              {CAB} Caja on = 
+              {I}   Id (Caja on) ✓
+
+   2.2) x = False -> alternado ( Caja (cajaAlternada off) )
+               {CAB} alternado ( Caja on ) =
+               {AC}  Caja (cajaAlternada on) =
+               {CAB} Caja off = 
+               {I}   Id (Caja off) ✓
+
+  # Caso recursivo:
+
+  ## Series
+  qvq ∀i, j :: Circuito. (P(i) ^ p(j)) -> P(Serie i j)
+
+  P(Serie i j): alternado ( alternado (Serie i j) ) = id (Serie i j)
+
+    {AS} alternado ( Serie (alternado i) (alternado j) ) =
+    {AS} Serie (alternado ( alternado i )) ( alternado (alternado j) ) =
+    {HI} Serie (id i) ( alternado (alternado j) ) = 
+    {HI} Serie (id i) (id j) =
+    {I}  Serie i (id j) =
+    {I}  Serie i j =
+    {I}  Id (Serie i j) 
+
+  ## Paralelo
+  qvq ∀i, j :: Circuito. ∀q, k:: Caja. 
+  (P(i)^P(j)^P(q)^P(k)) -> P(Paralelo q i j k)
+  
+  P(Paralelo q i j k): alternado (alternado (Paralelo q i j k )) = id ( Paralelo q i j k )
+
+    {AP} alternado ( Paralelo (cajaAlternada q) (alternado i) (alternado j) (cajaAlternada k) ) =
+    {AP} Paralelo (alternado cajaAlternada q) (alternado alternado i) (alternado alternado j) (alternado cajaAlternada k) = 
+    {AC} Paralelo (cajaAlternada cajaAlternada q) (alternado alternado i) (alternado alternado j) (alternado cajaAlternada k) =
+    {AC} Paralelo (cajaAlternada cajaAlternada q) (alternado alternado i) (alternado alternado j) (cajaAlternada cajaAlternada k) =
+    {HI} Paralelo (cajaAlternada cajaAlternada q) (id i) (alternado alternado j) (cajaAlternada cajaAlternada k) =
+    {HI} Paralelo (cajaAlternada cajaAlternada q) (id i) (id j) (cajaAlternada cajaAlternada k) =
+    {I} Paralelo (cajaAlternada cajaAlternada q) i (id j) (cajaAlternada cajaAlternada k) =
+    {i} Paralelo (cajaAlternada cajaAlternada q) i j (cajaAlternada cajaAlternada k) =
+
+    Por lema de generacion de cajas q, k pueden ser Bombilla Bool o Nada:
+
+    1) q = Nada, k = Nada ->
+          Paralelo (cajaAlternada cajaAlternada Nada) i j (cajaAlternada cajaAlternada Nada) =
+        {CAN} Paralelo (cajaAlternada Nada) i j (cajaAlternada cajaAlternada Nada) =
+        {CAN} Paralelo Nada i j (cajaAlternada cajaAlternada Nada) =
+        {CAN} Paralelo Nada i j (cajaAlternada Nada) =
+        {CAN} Paralelo Nada i j Nada =
+        {I}   id Paralelo Nada i j Nada ✓ 
+
+    2) 
+
+      
+    
+
+
+  
+
+
+
+
 
 --}
