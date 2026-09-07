@@ -1,6 +1,5 @@
 import           Test.HUnit
 import           TP1
-import           TP1        (Circuito)
 
 -- CIRCUITOS DE PRUEBA
 miCircuito :: Circuito
