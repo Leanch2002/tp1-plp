@@ -13,6 +13,9 @@ miCircuito =
     )
     cajaOn
 
+miCircuitoProlijo :: Circuito
+miCircuitoProlijo = Serie (Serie cajaOn cajaOff) cajaOn
+miCircuitoDesprolijo :: Circuito
 miCircuitoDesprolijo = Serie cajaOn (Serie cajaOff cajaOn)
     
 -- Invierte los 3 tipos de circuitos estando incluso anidados
