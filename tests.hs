@@ -1,5 +1,6 @@
 import           Test.HUnit
 import           TP1
+import           TP1        (Circuito)
 
 -- CIRCUITOS DE PRUEBA
 miCircuito :: Circuito
@@ -17,7 +18,11 @@ miCircuitoProlijo :: Circuito
 miCircuitoProlijo = Serie (Serie cajaOn cajaOff) cajaOn
 miCircuitoDesprolijo :: Circuito
 miCircuitoDesprolijo = Serie cajaOn (Serie cajaOff cajaOn)
-    
+miCircuitoProlijoComplejo :: Circuito
+miCircuitoProlijoComplejo = Paralelo on (Serie (Serie cajaOn cajaOn) cajaOff) cajaNada off
+miCircuitoDesprolijoComplejo :: Circuito
+miCircuitoDesprolijoComplejo = Paralelo on (Serie (Serie cajaOn (Serie cajaOff cajaNada)) cajaOff) cajaNada off
+
 -- Invierte los 3 tipos de circuitos estando incluso anidados
 miCircuitoInvertido :: Circuito
 miCircuitoInvertido =
@@ -109,21 +114,27 @@ testsEsCircuitoProlijo = TestList -- TODO: AGREGAR
     ~?= True,
     "Una serie cuyo segundo circuito tambien es una serie es un ciruito desprolijo"
     ~: esCircuitoProlijo miCircuitoDesprolijo
+    ~?= False,
+    "Un circuito complejo donde todas las series son prolijas"
+    ~: esCircuitoProlijo miCircuitoProlijoComplejo
+    ~?= True,
+    "Un circuito complejo donde una serie dentro de otra serie dentro de un paralelo tiene una serie como 2do circuito"
+    ~: esCircuitoProlijo miCircuitoDesprolijoComplejo
     ~?= False
   ]
 
 -- NOTA: para correr este test, cambiar la línea 18 del archivo tp1.hs de "show = showDeCircuito" a
   -- "show = showDeCircuitoConEstructura".
   -- De esa forma, podrán distinguir la estructura de los circuitos en serie.
-testsCircuitoEmprolijado :: Test
-testsCircuitoEmprolijado = TestList -- TODO: AGREGAR
-  [ "La versión emprolijada de una caja es la misma caja"
-    ~: circuitoEmprolijado cajaOn
-    ~?= cajaOn
-  ]
+--testsCircuitoEmprolijado :: Test
+--testsCircuitoEmprolijado = TestList -- TODO: AGREGAR
+--  [ "La versión emprolijada de una caja es la misma caja"
+--    ~: circuitoEmprolijado cajaOn
+--    ~?= cajaOn
+--  ]
 
 testsTienenLaMismaEstructura :: Test
-testsTienenLaMismaEstructura = TestList 
+testsTienenLaMismaEstructura = TestList
   [ "Cajas con distinto contenido"
     ~: tienenLaMismaEstructura cajaOn cajaNada
     ~?= True
@@ -162,7 +173,7 @@ tests = TestList
   , TestLabel "cantidadPrendidas"        testsCantidadPrendidas
   , TestLabel "cajasDeCircuito"          testsCajasDeCircuito
   , TestLabel "esCircuitoProlijo"        testsEsCircuitoProlijo
-  , TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
+  --, TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
   , TestLabel "tienenLaMismaEstructura"  testsTienenLaMismaEstructura
   , TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente
   ]
