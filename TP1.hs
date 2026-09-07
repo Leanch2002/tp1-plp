@@ -59,7 +59,7 @@ recCircuito fCaja fSerie fParalelo = rec
     rec (Paralelo caja1 cir1 cir2 caja2) = fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
 
 miCircuitoProlijo = Serie (Serie cajaOn cajaOff) cajaOn
-miCircuitoDesprolijo = Serie cajaOn (Serie cajaOff cajaOn)
+
 
 -- 2: foldCircuito
 foldCircuito :: (Caja -> a)
