@@ -47,88 +47,80 @@ cajaOff  = Caja off
 cajaNada = Caja Nada
 
 -- 1: recCircuito
-
-recCircuito :: (Caja -> a)
-            -> (Circuito -> a -> Circuito -> a -> a)
-            -> (Caja -> Circuito -> a -> Circuito -> a -> Caja -> a)
-            -> Circuito -> a
+recCircuito :: 
+  (Caja -> a) ->
+  (Circuito -> a -> Circuito -> a -> a) ->
+  (Caja -> Circuito -> a -> Circuito -> a -> Caja -> a) ->
+  Circuito -> a
 recCircuito fCaja fSerie fParalelo = rec
-    where
+  where
     rec (Caja caja)                      = fCaja caja
     rec (Serie cir1 cir2)                = fSerie cir1 (rec cir1) cir2 (rec cir2)
     rec (Paralelo caja1 cir1 cir2 caja2) = fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
 
-miCircuitoProlijo = Serie (Serie cajaOn cajaOff) cajaOn
-
-
 -- 2: foldCircuito
-foldCircuito :: (Caja -> a)
-             -> (a -> a -> a)
-             -> (Caja -> a -> a -> Caja -> a)
-             -> Circuito -> a
+foldCircuito :: 
+  (Caja -> a) ->
+  (a -> a -> a) ->
+  (Caja -> a -> a -> Caja -> a) ->
+  Circuito -> a
 foldCircuito fCaja fSerie fParalelo =
   recCircuito fCaja (\_ x _ y -> fSerie x y) (\caja1 _ x _ y caja2 -> fParalelo caja1 x y caja2)
 
 -- 3 invertido
 invertido :: Circuito -> Circuito
-invertido = foldCircuito Caja (\a b -> Serie b a) (\a b c d -> Paralelo d c b a)
+invertido = foldCircuito Caja (flip Serie) (\a b c d -> Paralelo d c b a)
 
 -- 4: hayCaminoIluminado
 hayCaminoIluminado :: Circuito -> Bool
-hayCaminoIluminado =
-  foldCircuito
-   isOn
-   (&&)
-   (\c1 rec1 rec2 c2 -> (isOn c1 && isOn c2) && (rec1 || rec2))
+hayCaminoIluminado = foldCircuito isOn (&&) (\c1 rec1 rec2 c2 -> (isOn c1 && isOn c2) && (rec1 || rec2))
 
 isOn:: Caja -> Bool
 isOn = (== Bombilla True)
 
 -- 5: cantidadPrendidas
 cantidadPrendidas:: Circuito -> Int
-cantidadPrendidas = foldCircuito valor (+) (\c1 cir1 cir2 c2 -> (valor c1) + cir1 + cir2 + (valor c2))
-  where valor = (\c -> if isOn c then 1 else 0)
+cantidadPrendidas = foldCircuito estado (+) (\c1 cir1 cir2 c2 -> estado c1 + cir1 + cir2 + estado c2)
+  where estado = (\c -> if isOn c then 1 else 0)
 
 -- 6: cajasDeCircuito
 cajasDeCircuito :: Circuito -> [Caja]
 cajasDeCircuito = foldCircuito (:[]) (++) (\c1 cir1 cir2 c2 -> [c1] ++ cir1 ++ cir2 ++ [c2])
 
 -- 7: esCircuitoProlijo
-
 esCircuitoProlijo :: Circuito -> Bool
 esCircuitoProlijo = recCircuito (const True) (\c1 _ c2 _ -> not (esSerie c2)) (\_ c1 _ c2 _ _ -> not (esSerieDesprolija c1) && not (esSerieDesprolija c2))
-  where esSerieDesprolija (Serie a b) = esSerie b
-        esSerieDesprolija _           = False
-        esSerie (Serie _ _) = True
-        esSerie _           = False
+  where 
+    esSerieDesprolija (Serie a b) = esSerie b
+    esSerieDesprolija _           = False
+    esSerie (Serie _ _) = True
+    esSerie _           = False
 
 -- 8: circuitoEmprolijado
-
 circuitoEmprolijado :: Circuito -> Circuito
 circuitoEmprolijado = undefined -- TODO: COMPLETAR
 
 -- 9: tienenLaMismaEstructura
-
 -- La idea aca es que usamos foldr para construir un monton de funciones que van tomando valores de el segundo circuito
 tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
 tienenLaMismaEstructura = foldCircuito fCaja fSerie fParalelo 
-          where
-            -- si vaciamos el primer circuito se corre esto en el segundo
-            fCaja _ (Caja _) = True
-            fCaja _ _ = False
-            -- si primer circuito es serie -> matcheamos casos para el segundo
-            fSerie rec1 rec2 cir2 = case cir2 of
-                      (Serie c1 c2) -> (rec1 c1) && (rec2 c2)
-                      _             -> False
-            -- si primer circuito es paralelo -> matcheamos casos para el segundo
-            fParalelo  _ rec1 rec2 _ cir2 = case cir2 of
-                      (Paralelo _ c1 c2 _) -> (rec1 c1) && (rec2 c2)
-                      _                    -> False
+  where
+    -- si vaciamos el primer circuito se corre esto en el segundo
+    fCaja _ (Caja _) = True
+    fCaja _ _        = False
+    -- si primer circuito es serie -> matcheamos casos para el segundo
+    fSerie rec1 rec2 cir2 = case cir2 of
+      (Serie c1 c2) -> (rec1 c1) && (rec2 c2)
+      _             -> False
+    -- si primer circuito es paralelo -> matcheamos casos para el segundo
+    fParalelo  _ rec1 rec2 _ cir2 = case cir2 of
+      (Paralelo _ c1 c2 _) -> (rec1 c1) && (rec2 c2)
+      _                    -> False
 
 -- 10: subCircuitoMásResistente
 subCircuitoMásResistente :: Circuito -> Circuito
 subCircuitoMásResistente = recCircuito
-  (Caja)
+  Caja
   (\cir1 rec1 cir2 rec2 -> mejorSegun compararResistencia (Serie cir1 cir2 : rec1 : rec2 : []))
   (\caja1 cir1 rec1 cir2 rec2 caja2 -> mejorSegun compararResistencia (Paralelo caja1 cir1 cir2 caja2 : Caja caja1 : rec1 : rec2 : Caja caja2 : []))
 
