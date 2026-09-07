@@ -152,31 +152,46 @@ not :: Bool -> Bool
   P(t) : para todo c :: circuito . alternado ( alternado c ) = id c
   
   # procedemos por induccion sobre t
-
-  P(Caja a) = alternado ( alternado Caja a ) = id (Caja a)
+  P(Caja a) : alternado ( alternado Caja a ) = id (Caja a)
   alternado ( alternado Caja a ) =
    {AC} alternado ( Caja (cajaAlternada a) ) =
-   
-   Por lema de generacion de cajas a puede ser Bombilla Bool o Nada:
-   1) a = Nada -> alternado ( Caja (cajaAlternada Nada) )
-                  {CAN} alternado ( Caja Nada ) = 
+   {AC} Caja (cajaAlternada (cajaAlternada a)) =
+
+   Esto podemos resolverlo facilmente sin agregar nada mas pero vamos a crear un lema nuevo para evitarnos escribir de mas en pasos subsiguientes:
+
+   {LEMA 1} 
+    Caja (cajaAlternada (cajaAlternada a)) = id (Caja a)
+    
+    Por lema de generacion de cajas, la variable a solo puede ser Bombilla Bool o Nada:
+    1) a = Nada -> Caja (cajaAlternada (cajaAlternada Nada))) = id (Caja Nada)
+                  {CAN} Caja (cajaAlternada Nada) = 
                   {CAN} Caja Nada = 
                   {I} Id (Caja Nada) ✓
 
-   2) ∀x::bool. alternado (Caja (cajaAlternada (Bombilla x)))
-   Por lema de generacion de booleanos x es True o False 
+   2) ∀x::bool. a = Bombilla x -> Caja (cajaAlternada (cajaAlternada (Bombilla x))) = id (Caja (Bombilla x))
+      
+      Por lema de generacion de booleanos x es True o False 
 
-   2.1) x = True -> alternado ( Caja (cajaAlternada on) )
-              {CAB} alternado ( Caja off ) =
-              {AC}  Caja (cajaAlternada off) =
-              {CAB} Caja on = 
-              {I}   Id (Caja on) ✓
+      2.1) x = True -> Caja (cajaAlternada (cajaAlternada (Bombilla True))) = id (Caja (Bombilla True))
+          {CAB} Caja (cajaAlternada (Bombilla (not True))) =
+          {NT}  Caja (cajaAlternada (Bombilla False)) =
+          {CAB} Caja (Bombilla (not False)) =
+          {NF}  Caja (Bombilla True) =
+          {I}   Id (Caja (Bombilla True)) ✓
 
-   2.2) x = False -> alternado ( Caja (cajaAlternada off) )
-               {CAB} alternado ( Caja on ) =
-               {AC}  Caja (cajaAlternada on) =
-               {CAB} Caja off = 
-               {I}   Id (Caja off) ✓
+      2.2) x = False -> Caja ( cajaAlternada (cajaAlternada (Bombilla False))) = id (Caja (Bombilla False))
+           {CAB} Caja (cajaAlternada (Bombilla (not False))) =
+           {NF}  Caja (cajaAlternada (Bombilla True)) =
+           {CAB} Caja (Bombilla (not True)) =
+           {NT} Caja (Bombilla False) = 
+           {I}   Id (Caja (Bombilla False)) ✓
+    Luego, por lema de generacion de Cajas queda demostrado el Lema 1.
+    
+    Volvemos a P(Caja a)
+    P(Caja a) : alternado ( alternado Caja a ) = id (Caja a)
+      {AC} alternado ( Caja (cajaAlternada a) ) =
+      {AC} Caja (cajaAlternada (cajaAlternada a)) =
+      {LEMA 1} id (Caja a) ✓
 
   # Caso recursivo:
 
@@ -191,7 +206,7 @@ not :: Bool -> Bool
     {HI} Serie (id i) (id j) =
     {I}  Serie i (id j) =
     {I}  Serie i j =
-    {I}  Id (Serie i j) 
+    {I}  Id (Serie i j) ✓
 
   ## Paralelo
   qvq ∀i, j :: Circuito. ∀q, k:: Caja. 
@@ -207,19 +222,11 @@ not :: Bool -> Bool
     {HI} Paralelo (cajaAlternada cajaAlternada q) (id i) (id j) (cajaAlternada cajaAlternada k) =
     {I} Paralelo (cajaAlternada cajaAlternada q) i (id j) (cajaAlternada cajaAlternada k) =
     {i} Paralelo (cajaAlternada cajaAlternada q) i j (cajaAlternada cajaAlternada k) =
-
-    Por lema de generacion de cajas q, k pueden ser Bombilla Bool o Nada:
-
-    1) q = Nada, k = Nada ->
-          Paralelo (cajaAlternada cajaAlternada Nada) i j (cajaAlternada cajaAlternada Nada) =
-        {CAN} Paralelo (cajaAlternada Nada) i j (cajaAlternada cajaAlternada Nada) =
-        {CAN} Paralelo Nada i j (cajaAlternada cajaAlternada Nada) =
-        {CAN} Paralelo Nada i j (cajaAlternada Nada) =
-        {CAN} Paralelo Nada i j Nada =
-        {I}   id Paralelo Nada i j Nada ✓ 
-
-    2) 
-
+    {LEMA 1} Paralelo (id q) i j (cajaAlternada cajaAlternada k) =
+    {LEMA 1} Paralelo (id q) i j (id k) =
+    {I} Paralelo q i j (id k) =
+    {I} Paralelo q i j k = 
+    {I} id (Paralelo q i j k) ✓
       
     
 
