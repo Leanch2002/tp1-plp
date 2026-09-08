@@ -98,7 +98,7 @@ testsCantidadPrendidas = TestList -- TODO: AGREGAR
     "Paralelo con 2 prendidas, 1 apagada, y 1 vacia (6)"
     ~: cantidadPrendidas (Paralelo on cajaOn cajaNada off)
     ~?= 2,
-    "Circuito complejo con 5 cajas encendidas (7)"
+    "Circuito complejo con 6 cajas encendidas (7)"
     ~: cantidadPrendidas miCircuito
     ~?= 6,
     "Cambiar la estructura de un circuito no cambia la cantidad de luces prendidas (8)"
