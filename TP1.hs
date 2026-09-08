@@ -237,14 +237,5 @@ not :: Bool -> Bool
     {I} Paralelo q i j (id k) =
     {I} Paralelo q i j k = 
     {I} id (Paralelo q i j k) ✓
-      
-    
-
-
-  
-
-
-
-
 
 --}
