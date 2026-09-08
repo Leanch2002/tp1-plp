@@ -106,8 +106,9 @@ tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
 tienenLaMismaEstructura = foldCircuito fCaja fSerie fParalelo 
   where
     -- si vaciamos el primer circuito se corre esto en el segundo
-    fCaja _ (Caja _) = True
-    fCaja _ _        = False
+    fCaja _ cir2 = case cir2 of
+      (Caja _) -> True
+      _        -> False
     -- si primer circuito es serie -> matcheamos casos para el segundo
     fSerie rec1 rec2 cir2 = case cir2 of
       (Serie c1 c2) -> (rec1 c1) && (rec2 c2)
