@@ -47,7 +47,7 @@ cajaOff  = Caja off
 cajaNada = Caja Nada
 
 -- 1: recCircuito
-recCircuito :: 
+recCircuito ::
   (Caja -> a) ->
   (Circuito -> a -> Circuito -> a -> a) ->
   (Caja -> Circuito -> a -> Circuito -> a -> Caja -> a) ->
@@ -59,7 +59,7 @@ recCircuito fCaja fSerie fParalelo = rec
     rec (Paralelo caja1 cir1 cir2 caja2) = fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
 
 -- 2: foldCircuito
-foldCircuito :: 
+foldCircuito ::
   (Caja -> a) ->
   (a -> a -> a) ->
   (Caja -> a -> a -> Caja -> a) ->
@@ -89,8 +89,8 @@ cajasDeCircuito = foldCircuito (:[]) (++) (\c1 cir1 cir2 c2 -> [c1] ++ cir1 ++ c
 
 -- 7: esCircuitoProlijo
 esCircuitoProlijo :: Circuito -> Bool
-esCircuitoProlijo = recCircuito (const True) (\c1 _ c2 _ -> not (esSerie c2)) (\_ c1 _ c2 _ _ -> not (esSerieDesprolija c1) && not (esSerieDesprolija c2))
-  where 
+esCircuitoProlijo = recCircuito (const True) (\c1 rec1 c2 rec2 -> not (esSerie c2) && rec1 && rec2) (\_ c1 rec1 c2 rec2 _ -> not (esSerieDesprolija c1) && not (esSerieDesprolija c2) && rec1 && rec2)
+  where
     esSerieDesprolija (Serie a b) = esSerie b
     esSerieDesprolija _           = False
     esSerie (Serie _ _) = True
@@ -103,7 +103,7 @@ circuitoEmprolijado = undefined -- TODO: COMPLETAR
 -- 9: tienenLaMismaEstructura
 -- La idea aca es que usamos foldr para construir un monton de funciones que van tomando valores de el segundo circuito
 tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
-tienenLaMismaEstructura = foldCircuito fCaja fSerie fParalelo 
+tienenLaMismaEstructura = foldCircuito fCaja fSerie fParalelo
   where
     -- si vaciamos el primer circuito se corre esto en el segundo
     fCaja _ (Caja _) = True
