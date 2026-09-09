@@ -126,7 +126,12 @@ subCircuitoMásResistente = recCircuito
   (\caja1 cir1 rec1 cir2 rec2 caja2 -> mejorSegun compararResistencia (Paralelo caja1 cir1 cir2 caja2 : Caja caja1 : rec1 : rec2 : Caja caja2 : []))
 
 resistenciaCircuito :: Circuito -> Float
-resistenciaCircuito = undefined
+resistenciaCircuito = recCircuito resCaja (\cir1 rec1 cir2 rec2 -> rec1 + rec2) (\c1 cir1 rec1 cir2 rec2 c2 -> resCaja c1 + resCaja c2 + (1/rec1) + (1/rec2))
+  where
+    resCaja c = case c of
+      Bombilla True  -> 2
+      Bombilla False -> 1
+      Nada           -> -2
 
 compararResistencia :: Circuito -> Circuito -> Bool
 compararResistencia = (\cir1 cir2 -> resistenciaCircuito cir1 > resistenciaCircuito cir2)
@@ -157,7 +162,7 @@ not :: Bool -> Bool
 {NF} not False = True
 ----------------------------------------
 
-# Demostrar: 
+# Demostrar:
 
         alternado . alternado = id
 
@@ -165,39 +170,39 @@ not :: Bool -> Bool
   {EXT} ∀ c :: circuito, alternado ( alternado c ) = id c
 
   # procedemos por induccion sobre c
-  
+
   P(c) : ∀ c :: circuito, alternado ( alternado c ) = id c
 
   # caso base
 
   P(Caja a) : alternado ( alternado Caja a ) = id (Caja a)
-  
+
         alternado ( alternado Caja a ) =
    {AC} alternado ( Caja (cajaAlternada a) ) =
-   {AC} Caja (cajaAlternada (cajaAlternada a)) = 
+   {AC} Caja (cajaAlternada (cajaAlternada a)) =
 
   Esto podemos resolverlo facilmente sin agregar nada mas pero vamos a crear un lema nuevo para evitarnos escribir de mas en pasos subsiguientes:
 
    {LEMA 1} Caja (cajaAlternada (cajaAlternada a)) = id (Caja a)
-    
+
     Por lema de generacion de cajas, la variable a solo puede ser Bombilla Bool o Nada:
-    caso a = Nada) 
+    caso a = Nada)
 
           Caja (cajaAlternada (cajaAlternada Nada))) = id (Caja Nada)
-    {CAN} Caja (cajaAlternada Nada) = 
-    {CAN} Caja Nada = 
+    {CAN} Caja (cajaAlternada Nada) =
+    {CAN} Caja Nada =
     {I}   Id (Caja Nada) ✓
 
     caso ∀x::bool. a = Bombilla x)
-    
+
       Caja (cajaAlternada (cajaAlternada (Bombilla x))) = id (Caja (Bombilla x))
-      
-      Por lema de generacion de booleanos x es True o False: 
+
+      Por lema de generacion de booleanos x es True o False:
 
     caso x = True)
-    
+
           Caja (cajaAlternada (cajaAlternada (Bombilla True))) = id (Caja (Bombilla True))
-    
+
     {CAB} Caja (cajaAlternada (Bombilla (not True))) =
     {NT}  Caja (cajaAlternada (Bombilla False)) =
     {CAB} Caja (Bombilla (not False)) =
@@ -205,19 +210,19 @@ not :: Bool -> Bool
     {I}   Id (Caja (Bombilla True)) ✓
 
     caso x = False)
-    
+
           Caja ( cajaAlternada (cajaAlternada (Bombilla False))) = id (Caja (Bombilla False))
 
     {CAB} Caja (cajaAlternada (Bombilla (not False))) =
     {NF}  Caja (cajaAlternada (Bombilla True)) =
     {CAB} Caja (Bombilla (not True)) =
-    {NT} Caja (Bombilla False) = 
+    {NT} Caja (Bombilla False) =
     {I}   Id (Caja (Bombilla False)) ✓
 
     Luego, por lema de generacion de Cajas queda demostrado el Lema 1.
-    
+
     Volvemos a P(Caja a): alternado ( alternado Caja a ) = id (Caja a)
-    
+
     {AC} alternado ( Caja (cajaAlternada a) ) =
     {AC} Caja (cajaAlternada (cajaAlternada a)) =
     {LEMA 1} id (Caja a) ✓
@@ -231,20 +236,20 @@ not :: Bool -> Bool
 
     {AS} alternado ( Serie (alternado i) (alternado j) ) =
     {AS} Serie (alternado ( alternado i )) ( alternado (alternado j) ) =
-    {HI} Serie (id i) ( alternado (alternado j) ) = 
+    {HI} Serie (id i) ( alternado (alternado j) ) =
     {HI} Serie (id i) (id j) =
     {I}  Serie i (id j) =
     {I}  Serie i j =
     {I}  Id (Serie i j) ✓
 
   ## Paralelo
-  quiero ver que ∀i, j :: Circuito. ∀q, k:: Caja. 
+  quiero ver que ∀i, j :: Circuito. ∀q, k:: Caja.
   (P(i)^P(j)^P(q)^P(k)) -> P(Paralelo q i j k)
-  
+
   P(Paralelo q i j k): alternado (alternado (Paralelo q i j k )) = id ( Paralelo q i j k )
 
     {AP} alternado ( Paralelo (cajaAlternada q) (alternado i) (alternado j) (cajaAlternada k) ) =
-    {AP} Paralelo (cajaAlternada  (cajaAlternada q)) (alternado alternado i) (alternado alternado j) (cajaAlternada (cajaAlternada k)) = 
+    {AP} Paralelo (cajaAlternada  (cajaAlternada q)) (alternado alternado i) (alternado alternado j) (cajaAlternada (cajaAlternada k)) =
     {HI} Paralelo (cajaAlternada cajaAlternada q) (id i) (alternado alternado j) (cajaAlternada cajaAlternada k) =
     {HI} Paralelo (cajaAlternada cajaAlternada q) (id i) (id j) (cajaAlternada cajaAlternada k) =
     {I} Paralelo (cajaAlternada cajaAlternada q) i (id j) (cajaAlternada cajaAlternada k) =
@@ -252,7 +257,7 @@ not :: Bool -> Bool
     {LEMA 1} Paralelo (id q) i j (cajaAlternada cajaAlternada k) =
     {LEMA 1} Paralelo (id q) i j (id k) =
     {I} Paralelo q i j (id k) =
-    {I} Paralelo q i j k = 
+    {I} Paralelo q i j k =
     {I} id (Paralelo q i j k) ✓
 
   ∴ Queda demostrada la propiedad alternado . alternado = id
