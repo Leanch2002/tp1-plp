@@ -126,7 +126,7 @@ subCircuitoMásResistente = recCircuito
   (\caja1 cir1 rec1 cir2 rec2 caja2 -> mejorSegun compararResistencia (Paralelo caja1 cir1 cir2 caja2 : Caja caja1 : rec1 : rec2 : Caja caja2 : []))
 
 resistenciaCircuito :: Circuito -> Float
-resistenciaCircuito = recCircuito resCaja (\cir1 rec1 cir2 rec2 -> rec1 + rec2) (\c1 cir1 rec1 cir2 rec2 c2 -> resCaja c1 + resCaja c2 + (1/rec1) + (1/rec2))
+resistenciaCircuito = recCircuito resCaja (\_ rec1 _ rec2 -> rec1 + rec2) (\c1 _ rec1 _ rec2 c2 -> resCaja c1 + resCaja c2 + (1/rec1) + (1/rec2))
   where
     resCaja c = case c of
       Bombilla True  -> 2
