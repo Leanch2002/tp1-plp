@@ -19,7 +19,7 @@ miCircuitoDesprolijo = Serie cajaOn (Serie cajaOff cajaOn)
 miCircuitoProlijoComplejo :: Circuito
 miCircuitoProlijoComplejo = Paralelo on (Serie (Serie cajaOn cajaOn) cajaOff) cajaNada off
 miCircuitoDesprolijoComplejo :: Circuito
-miCircuitoDesprolijoComplejo = Paralelo on (Serie (Serie cajaOn (Serie cajaOff cajaNada)) cajaOff) cajaNada off
+miCircuitoDesprolijoComplejo = Paralelo on (Serie cajaOff (Serie cajaOn cajaOn)) cajaNada off
 
 -- TESTS
 testsInvertido :: Test
@@ -29,16 +29,16 @@ testsInvertido = TestList -- TODO: AGREGAR
     ~?= cajaOn,
     "Caja invertida (2)"
     ~: invertido cajaOff
-    ~?= cajaOff, 
+    ~?= cajaOff,
     "Caja invertida (3)"
     ~: invertido cajaNada
-    ~?= cajaNada, 
+    ~?= cajaNada,
     "Serie invertida (4)"
     ~: invertido (Serie cajaOn cajaOff)
-    ~?= (Serie cajaOff cajaOn), 
+    ~?= (Serie cajaOff cajaOn),
     "Paralelo invertido (5)"
     ~: invertido (Paralelo on cajaOn cajaOff off)
-    ~?= (Paralelo off cajaOff cajaOn on), 
+    ~?= (Paralelo off cajaOff cajaOn on),
     "Circuito invertido (6)"
     ~: invertido miCircuito
     ~?= miCircuitoInvertido,
@@ -51,28 +51,28 @@ testsHayCaminoIluminado :: Test
 testsHayCaminoIluminado = TestList -- TODO: AGREGAR
   [ "En una caja con bombilla encendida hay camino iluminado (1)"
     ~: hayCaminoIluminado cajaOn
-    ~?= True, 
+    ~?= True,
     "Caja apagada (2)"
     ~: hayCaminoIluminado cajaOff
-    ~?= False, 
+    ~?= False,
     "Serie sin camino (3)"
     ~: hayCaminoIluminado (Serie cajaOn cajaOff)
-    ~?= False, 
+    ~?= False,
     "Serie con camino (4)"
     ~: hayCaminoIluminado (Serie cajaOn cajaOn)
-    ~?= True, 
+    ~?= True,
     "Paralelo sin camino por extremo (5)"
     ~: hayCaminoIluminado (Paralelo on cajaOn cajaOff off)
-    ~?= False, 
+    ~?= False,
     "Paralelo sin camino por medio (6)"
     ~: hayCaminoIluminado (Paralelo on cajaOff cajaOff on)
-    ~?= False, 
+    ~?= False,
     "Paralelo con camino (7)"
     ~: hayCaminoIluminado (Paralelo on cajaOn cajaOff on)
-    ~?= True, 
+    ~?= True,
     "Este circuito No tiene camino iluminado (8)"
     ~: hayCaminoIluminado miCircuito
-    ~?= False, 
+    ~?= False,
     "En este circuito HAY un camino iluminado, y otros caminos que no (9)"
     ~: hayCaminoIluminado cirCaminoIluminado
     ~?= True
@@ -170,7 +170,7 @@ testsTienenLaMismaEstructura :: Test
 testsTienenLaMismaEstructura = TestList
   [ "Cajas con distinto contenido (1)"
     ~: tienenLaMismaEstructura cajaOn cajaNada
-    ~?= True, 
+    ~?= True,
     "Series con la misma estructura (2)"
     ~: tienenLaMismaEstructura
       (Serie (Serie cajaOn cajaOff) cajaOn)
