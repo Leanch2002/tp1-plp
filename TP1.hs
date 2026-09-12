@@ -126,9 +126,8 @@ resistenciaCircuito :: Circuito -> Float
 resistenciaCircuito = foldCircuito resCaja (+) (\c1 rec1 rec2 c2 -> resCaja c1 + resCaja c2 + (1/rec1) + (1/rec2))
   where
     resCaja c = case c of
-      on   -> 2
-      off  -> 1
-      Nada -> -2
+      Bombilla estado -> if (Bombilla estado == on) then 2 else 1
+      Nada            -> -2
 
 compararResistencia :: Circuito -> Circuito -> Bool
 compararResistencia = (\cir1 cir2 -> resistenciaCircuito cir1 > resistenciaCircuito cir2)
