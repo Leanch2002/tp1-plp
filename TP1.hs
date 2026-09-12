@@ -73,15 +73,12 @@ invertido = foldCircuito Caja (flip Serie) (\c1 rec1 rec2 c2 -> Paralelo c2 rec2
 
 -- 4: hayCaminoIluminado
 hayCaminoIluminado :: Circuito -> Bool
-hayCaminoIluminado = foldCircuito isOn (&&) (\c1 rec1 rec2 c2 -> (isOn c1 && isOn c2) && (rec1 || rec2))
-
-isOn:: Caja -> Bool
-isOn = (== on)
+hayCaminoIluminado = foldCircuito (== on) (&&) (\c1 rec1 rec2 c2 -> (c1 == on && c2 == on) && (rec1 || rec2))
 
 -- 5: cantidadPrendidas
 cantidadPrendidas:: Circuito -> Int
 cantidadPrendidas = foldCircuito estado (+) (\c1 cir1 cir2 c2 -> estado c1 + cir1 + cir2 + estado c2)
-  where estado = (\c -> if isOn c then 1 else 0)
+  where estado = (\c -> if c == on then 1 else 0)
 
 -- 6: cajasDeCircuito
 cajasDeCircuito :: Circuito -> [Caja]
