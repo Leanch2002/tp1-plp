@@ -54,9 +54,9 @@ recCircuito ::
   Circuito -> a
 recCircuito fCaja fSerie fParalelo = rec
   where
-    rec (Caja caja)                      = fCaja caja
-    rec (Serie cir1 cir2)                = fSerie cir1 (rec cir1) cir2 (rec cir2)
-    rec (Paralelo caja1 cir1 cir2 caja2) = fParalelo caja1 cir1 (rec cir1) cir2 (rec cir2) caja2
+    rec (Caja c)                   = fCaja c
+    rec (Serie cir1 cir2)          = fSerie cir1 (rec cir1) cir2 (rec cir2)
+    rec (Paralelo c1 cir1 cir2 c2) = fParalelo c1 cir1 (rec cir1) cir2 (rec cir2) c2
 
 -- 2: foldCircuito
 foldCircuito ::
@@ -65,23 +65,20 @@ foldCircuito ::
   (Caja -> a -> a -> Caja -> a) ->
   Circuito -> a
 foldCircuito fCaja fSerie fParalelo =
-  recCircuito fCaja (\_ x _ y -> fSerie x y) (\caja1 _ x _ y caja2 -> fParalelo caja1 x y caja2)
+  recCircuito fCaja (\_ rec1 _ rec2 -> fSerie rec1 rec2) (\caja1 _ rec1 _ rec2 caja2 -> fParalelo caja1 rec1 rec2 caja2)
 
 -- 3 invertido
 invertido :: Circuito -> Circuito
-invertido = foldCircuito Caja (flip Serie) (\a b c d -> Paralelo d c b a)
+invertido = foldCircuito Caja (flip Serie) (\c1 rec1 rec2 c2 -> Paralelo c2 rec2 rec1 c1)
 
 -- 4: hayCaminoIluminado
 hayCaminoIluminado :: Circuito -> Bool
-hayCaminoIluminado = foldCircuito isOn (&&) (\c1 rec1 rec2 c2 -> (isOn c1 && isOn c2) && (rec1 || rec2))
-
-isOn:: Caja -> Bool
-isOn = (== Bombilla True)
+hayCaminoIluminado = foldCircuito (== on) (&&) (\c1 rec1 rec2 c2 -> (c1 == on && c2 == on) && (rec1 || rec2))
 
 -- 5: cantidadPrendidas
 cantidadPrendidas:: Circuito -> Int
 cantidadPrendidas = foldCircuito estado (+) (\c1 cir1 cir2 c2 -> estado c1 + cir1 + cir2 + estado c2)
-  where estado = (\c -> if isOn c then 1 else 0)
+  where estado = (\c -> if c == on then 1 else 0)
 
 -- 6: cajasDeCircuito
 cajasDeCircuito :: Circuito -> [Caja]
@@ -89,10 +86,10 @@ cajasDeCircuito = foldCircuito (:[]) (++) (\c1 cir1 cir2 c2 -> [c1] ++ cir1 ++ c
 
 -- 7: esCircuitoProlijo
 esCircuitoProlijo :: Circuito -> Bool
-esCircuitoProlijo = recCircuito (const True) (\c1 rec1 c2 rec2 -> not (esSerie c2) && rec1 && rec2) (\_ c1 rec1 c2 rec2 _ -> not (esSerieDesprolija c1) && not (esSerieDesprolija c2) && rec1 && rec2)
+esCircuitoProlijo = recCircuito (const True) (\_ rec1 cir2 rec2 -> not (esSerie cir2) && rec1 && rec2) (\_ cir1 rec1 cir2 rec2 _ -> not (esSerieDesprolija cir1) && not (esSerieDesprolija cir2) && rec1 && rec2)
   where
-    esSerieDesprolija (Serie a b) = esSerie b
-    esSerieDesprolija _           = False
+    esSerieDesprolija (Serie _ cir2) = esSerie cir2
+    esSerieDesprolija _              = False
     esSerie (Serie _ _) = True
     esSerie _           = False
 
@@ -129,9 +126,9 @@ resistenciaCircuito :: Circuito -> Float
 resistenciaCircuito = foldCircuito resCaja (+) (\c1 rec1 rec2 c2 -> resCaja c1 + resCaja c2 + (1/rec1) + (1/rec2))
   where
     resCaja c = case c of
-      Bombilla True  -> 2
-      Bombilla False -> 1
-      Nada           -> -2
+      on   -> 2
+      off  -> 1
+      Nada -> -2
 
 compararResistencia :: Circuito -> Circuito -> Bool
 compararResistencia = (\cir1 cir2 -> resistenciaCircuito cir1 > resistenciaCircuito cir2)
