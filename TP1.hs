@@ -6,8 +6,8 @@ instance Show Caja where
     show = showDeCaja
 
 showDeCaja :: Caja -> String
-showDeCaja (Bombilla True)  = "cajaOn" --"💡"
-showDeCaja (Bombilla False) = "cajaOff" --"⚪️"
+showDeCaja (Bombilla True)  = "On" --"💡"
+showDeCaja (Bombilla False) = "Off" --"⚪️"
 showDeCaja (Nada)           = "Nada" --"🛑"
 
 data Circuito = Caja     Caja
