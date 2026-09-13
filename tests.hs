@@ -20,6 +20,16 @@ miCircuitoProlijoComplejo :: Circuito
 miCircuitoProlijoComplejo = Paralelo on (Serie (Serie cajaOn cajaOn) cajaOff) cajaNada off
 miCircuitoDesprolijoComplejo :: Circuito
 miCircuitoDesprolijoComplejo = Paralelo on (Serie cajaOff (Serie cajaOn cajaOn)) cajaNada off
+miCircuitoOnNada :: Circuito
+miCircuitoOnNada = Serie cajaOn cajaNada
+miCircuitoOffNada :: Circuito
+miCircuitoOffNada = Serie cajaOff cajaNada
+miCircuitoPareleloOnNada :: Circuito
+miCircuitoPareleloOnNada = Paralelo Nada (Serie cajaOn cajaOn) (Serie cajaNada cajaNada) on
+miCircuitoPareleloOffNada :: Circuito
+miCircuitoPareleloOffNada = Paralelo off (Serie cajaOff cajaOff) (Serie cajaNada cajaNada) Nada 
+miCircuitoPareleloNada :: Circuito
+miCircuitoPareleloNada = Paralelo on (Serie cajaNada cajaNada) (Serie cajaNada cajaNada) off
 
 -- TESTS
 testsInvertido :: Test
@@ -194,9 +204,37 @@ testsTienenLaMismaEstructura = TestList
   ]
 
 testsSubCircuitoMásResistente :: Test
-testsSubCircuitoMásResistente = TestList -- TODO: AGREGAR
+testsSubCircuitoMásResistente = TestList
   [
+    -- Para calcular la resistencia entre dos ciruitos se suma 2Ohm 
+    -- para las cajas con bombilla encendida, 1 para las cajas con bombilla apagada
+    -- y se resta 2Ohm para las cajas sin bombilla  
 
+    -- "Entre con solo 2 cajas, una con bombilla y otra sin nada,el mas resistente es el que tiene la bombilla, sin importar su estado"
+    "Caso on (1)"
+    ~: subCircuitoMásResistente miCircuitoOnNada
+    ~?= cajaOn,
+    "Caso off (2)"
+    ~: subCircuitoMásResistente  miCircuitoOffNada
+    ~?= cajaOff,
+    "Entre dos circuitos, el mas reisistente es el que tiene mas bombillas (3)"
+    ~: subCircuitoMásResistente miCircuitoPareleloOnNada
+    ~?= Serie cajaOn cajaOn,
+    "Sin importar si estan prendidas o apagadas (4)"
+    ~: subCircuitoMásResistente miCircuitoPareleloOffNada
+    ~?= Serie cajaOff cajaOff,
+    "Si ninguno de los subcircuitos tiene una bombilla toma la caja con mas resistencia (5)"
+    ~: subCircuitoMásResistente miCircuitoPareleloOffNada
+    ~?= Serie cajaOff cajaOff,
+    "El subcircuito mas resistente no cambia al modificar el orden de las cajas(6)"
+    ~: subCircuitoMásResistente miCircuitoPareleloOffNada == subCircuitoMásResistente (invertido miCircuitoPareleloOffNada)
+    ~?= True,
+    "Para un circuito de solo una, el subcircuito mas resistente es el mismo (Caso On) (7)"
+    ~: subCircuitoMásResistente cajaOn
+    ~?= cajaOn,
+    "Para un circuito de solo una, el subcircuito mas resistente es el mismo (Caso off) (8)"
+    ~: subCircuitoMásResistente cajaOff
+    ~?= cajaOff
   ]
 
 tests :: Test
