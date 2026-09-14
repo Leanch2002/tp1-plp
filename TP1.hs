@@ -90,15 +90,12 @@ esCircuitoProlijo = recCircuito (const True) (\_ rec1 cir2 rec2 -> not (esSerie 
   where
     esSerieDesprolija (Serie _ cir2) = esSerie cir2
     esSerieDesprolija _              = False
+
     esSerie (Serie _ _) = True
     esSerie _           = False
 
--- 8: circuitoEmprolijado
-circuitoEmprolijado :: Circuito -> Circuito
-circuitoEmprolijado = undefined -- TODO: COMPLETAR
-
 -- 9: tienenLaMismaEstructura
--- La idea aca es que usamos foldr para construir un monton de funciones que van tomando valores de el segundo circuito
+-- La idea aca es que usamos foldr para construir un monton de funciones que van tomando valores del segundo circuito
 tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
 tienenLaMismaEstructura = foldCircuito fCaja fSerie fParalelo
   where
@@ -126,9 +123,9 @@ resistenciaCircuito :: Circuito -> Float
 resistenciaCircuito = foldCircuito resCaja (+) (\c1 rec1 rec2 c2 -> resCaja c1 + resCaja c2 + (1/rec1) + (1/rec2))
   where
     resCaja c = case c of
-      on   -> 2
-      off  -> 1
-      Nada -> -2
+      Bombilla True  -> 2
+      Bombilla False -> 1
+      Nada           -> -2
 
 compararResistencia :: Circuito -> Circuito -> Bool
 compararResistencia = (\cir1 cir2 -> resistenciaCircuito cir1 > resistenciaCircuito cir2)
